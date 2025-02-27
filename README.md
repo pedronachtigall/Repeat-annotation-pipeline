@@ -10,7 +10,7 @@ Bioinformatics pipeline and tutorial for performing repeat annotation in genome 
  - [bedtools](https://github.com/arq5x/bedtools2)
  - [SeqKit](https://github.com/shenwei356/seqkit)
 
-Ensure that all dependencies are working properly.
+Ensure that all dependencies are installed and working properly.
 
 ## Summary
  - [Run RepeatModeler](#run-repeatmodeler)
@@ -31,6 +31,7 @@ gzip -d Cadamanteus_genome.fasta.gz
 ```
 
 ##  Run RepeatModeler
+Let's create a species-specific library using RepeatModeler.
 
 ```
 mkdir RepeatModeler && cd RepeatModeler
@@ -59,8 +60,30 @@ awk '/^>/{print $1; next}{print}' Crotalus_Adamanteus-families.prefix.fa.known >
 ```
 
 ##  Classify unknown
+Let's classify the unknown sequences output by RepeatModeler using two machine learning approaches: DeepTE and TERL.
+
+We will use DeepTE to classify seqeunces using the metazoan models (this model is suitable for the snake species of this tutorial; modify it properly based on your target species).
+
+The TERL will be used to remove false-positives. We will use the model DS3 bacause it is suitable for the snake species (Modify the model properly based on your target species).
+
+Scripts ```CleanDeepTEheader.py``` and ```FilterTERL.py``` are available in this repository. Clone the repsitory or download each file separately.
+
+```
+wget "CleanDeepTEheader.py"
+wget "FilterTERL.py"
+
+python /path/to/DeepTE/DeepTE.py -d deepTE_out -o deepTE_out -i Crotalus_Adamanteus-families.prefix.fa.unknown -sp M -m_dir /path/to/DeepTE/models/Metazoans_model/
+python CleanDeepTEheader.py deepTE_out/opt_DeepTE.fasta Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE
+
+python /path/to/TERL/terl_test.py -m /path/to/TERL/Models/DS3/ -f Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE
+
+mv TERL* Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE.TERL
+
+python /home/pgn22a/programs/TERL/FilterTERL.py Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE.TERL Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE Crotalus_Adamanteus-families.prefix.fa.unknown.FINAL
+```
 
 ##  Run RepeatMasker
+Now that we have the species-specific library ready, we can perform the repeat annotation using RepeatMasker.
 
 ### Species-specific library
 
@@ -70,35 +93,7 @@ awk '/^>/{print $1; next}{print}' Crotalus_Adamanteus-families.prefix.fa.known >
 
 <!--
 
-#Run RepeatModeler
-
-mkdir RepeatModeler && cd RepeatModeler
-
-ln -s ../Cadam_primary_chromosomes.fasta Cadam_chr.fa
-
-BuildDatabase -name Crotalus_Adamanteus -engine ncbi Cadam_chr.fa
-
-RepeatModeler -pa 40 -engine ncbi -database Crotalus_Adamanteus
-
-cat Crotalus_Adamanteus-families.fa | seqkit fx2tab | awk '{ print "Cadamanteus_"$0 }' | seqkit tab2fx >Crotalus_Adamanteus-families.prefix.fa
-
-#separate files into known and Unknown
-cat Crotalus_Adamanteus-families.prefix.fa | seqkit fx2tab | grep -v "Unknown" | seqkit tab2fx > Crotalus_Adamanteus-families.prefix.fa.known
-cat Crotalus_Adamanteus-families.prefix.fa | seqkit fx2tab | grep "Unknown" | seqkit tab2fx > Crotalus_Adamanteus-families.prefix.fa.unknown
-
-
-awk '/^>/{print $1; next}{print}' Crotalus_Adamanteus-families.prefix.fa.known > Crotalus_Adamanteus-families.prefix.fa.known.FINAL
-
-
  #conda activate deepTE
-python /home/pgn22a/programs/DeepTE/DeepTE.py -d deepTE_out -o deepTE_out -i Crotalus_Adamanteus-families.prefix.fa.unknown -sp M -m_dir /home/pgn22a/programs/DeepTE/models/Metazoans_model/
-python ~/programs/DeepTE/CleanDeepTEheader.py deepTE_out/opt_DeepTE.fasta Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE
-
-python /home/pgn22a/programs/TERL/terl_test.py -m /home/pgn22a/programs/TERL/Models/DS3/ -f Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE
-
-mv TERL* Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE.TERL
-
-python /home/pgn22a/programs/TERL/FilterTERL.py Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE.TERL Crotalus_Adamanteus-families.prefix.fa.unknown.DeepTE Crotalus_Adamanteus-families.prefix.fa.unknown.FINAL
 
 #generate the RM2_CuratedSnakes
 
