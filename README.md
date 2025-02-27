@@ -32,6 +32,32 @@ gzip -d Cadamanteus_genome.fasta.gz
 
 ##  Run RepeatModeler
 
+```
+mkdir RepeatModeler && cd RepeatModeler
+
+ln -s ../Cadamanteus_genome.fasta Cadam_chr.fa
+
+BuildDatabase -name Crotalus_Adamanteus -engine ncbi Cadam_chr.fa
+
+RepeatModeler -pa 40 -engine ncbi -database Crotalus_Adamanteus
+```
+
+:warning: This will take a while!
+
+Let's add a prefix to sequence names and separate files into known and unknown based on RepeatModeler classification.
+
+```
+#add a prefix
+cat Crotalus_Adamanteus-families.fa | seqkit fx2tab | awk '{ print "Cadamanteus_"$0 }' | seqkit tab2fx > Crotalus_Adamanteus-families.prefix.fa
+
+#separate files into known and unknown
+cat Crotalus_Adamanteus-families.prefix.fa | seqkit fx2tab | grep -v "Unknown" | seqkit tab2fx > Crotalus_Adamanteus-families.prefix.fa.known
+cat Crotalus_Adamanteus-families.prefix.fa | seqkit fx2tab | grep "Unknown" | seqkit tab2fx > Crotalus_Adamanteus-families.prefix.fa.unknown
+
+#known set is ready to go
+awk '/^>/{print $1; next}{print}' Crotalus_Adamanteus-families.prefix.fa.known > Crotalus_Adamanteus-families.prefix.fa.known.FINAL
+```
+
 ##  Classify unknown
 
 ##  Run RepeatMasker
