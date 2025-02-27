@@ -194,5 +194,7 @@ bedtools maskfasta -soft -fi ../../Cadam_primary_chromosomes.fasta -bed Cadam_ch
 
 ## References
 If you use this tutorial or any of the resources/scripts, please consider citing: [Nachtigall et al., in prep]().
+
 If you use the curated set of repeat sequences from snakes, cite the original manuscript: [Castoe et al., 2013](https://doi.org/10.1073/pnas.1314475110).
+
 Please, cite the original mansucript of each tool used in this tutorial.
