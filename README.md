@@ -18,7 +18,18 @@ Ensure that all dependencies are working properly.
  - [Run RepeatMasker](#run-repeatmasker)
 	- [Species-specific library](#species-specific-library)
  	- [Species-specific and curated libraries](#species-specific-and-curated-libraries)
-    
+
+## Model species
+We will use the Eastern diamondback rattlesnake (*Crotalus adamanteus*) as a model for this tutorial.
+
+The genome is linked to the manuscript ["A Segregating Structural Variant Defines Novel Venom Phenotypes in the Eastern Diamondback Rattlesnake"]() published in *Molecular Biology and Evolution* and it is available in a [figshare repository](https://figshare.com/projects/Eastern_diamondback_rattlesnake_Crotalus_adamanteus_-_haplotype-resolved_genome_assembly/200614).
+
+Download and uncompress the genome data:
+```
+wget https://figshare.com/ndownloader/files/45450430 -O Cadamanteus_genome.fasta.gz
+gzip -d Cadamanteus_genome.fasta.gz
+```
+
 ##  Run RepeatModeler
 
 ##  Classify unknown
