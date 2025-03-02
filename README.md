@@ -1,3 +1,5 @@
+![repeat_annotation_pipeline](/repeat_annotation_tutorial_schema.png)
+
 # Repeat-annotation-pipeline
 Bioinformatics pipeline and tutorial for performing repeat annotation in genome assemblies using RepeatModeler and RepeatMasker. It also includes the commands needed to calculate the Repeat landscape (i.e., the CpG-adjusted kimura divergence versus the percent of the genome).
 
