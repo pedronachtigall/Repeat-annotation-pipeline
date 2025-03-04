@@ -1,4 +1,4 @@
-![repeat_annotation_pipeline](/repeat_annotation_tutorial_schema.png)
+![repeat_annotation_pipeline](/repeat_annotation_workflow.png)
 
 # Repeat-annotation-pipeline
 Bioinformatics pipeline and tutorial for performing repeat annotation in genome assemblies using RepeatModeler and RepeatMasker. It also includes the commands needed to calculate the Repeat landscape (i.e., the CpG-adjusted kimura divergence versus the percent of the genome).
@@ -28,7 +28,7 @@ We will use the Eastern diamondback rattlesnake (*Crotalus adamanteus*) as a mod
 
 The genome is linked to the manuscript ["A Segregating Structural Variant Defines Novel Venom Phenotypes in the Eastern Diamondback Rattlesnake"]() published in *Molecular Biology and Evolution* and it is available in a [figshare repository](https://figshare.com/projects/Eastern_diamondback_rattlesnake_Crotalus_adamanteus_-_haplotype-resolved_genome_assembly/200614).
 
-Download and uncompress the genome data:
+Download and decompress the genome data:
 ```
 wget https://figshare.com/ndownloader/files/45450430 -O Cadamanteus_genome.fasta.gz
 gzip -d Cadamanteus_genome.fasta.gz
@@ -36,7 +36,6 @@ gzip -d Cadamanteus_genome.fasta.gz
 
 ##  Run RepeatModeler
 Let's create a species-specific library using RepeatModeler.
-
 ```
 mkdir RepeatModeler && cd RepeatModeler
 
@@ -51,7 +50,6 @@ RepeatModeler -pa 20 -engine ncbi -database Crotalus_Adamanteus
 :warning: This may take a while!
 
 Let's add a prefix to sequence names and separate files into known and unknown based on RepeatModeler classification.
-
 ```
 #add a prefix
 cat Crotalus_Adamanteus-families.fa | seqkit fx2tab | awk '{ print "Cadamanteus_"$0 }' | seqkit tab2fx > Crotalus_Adamanteus-families.prefix.fa
@@ -72,7 +70,6 @@ We will use DeepTE to classify seqeunces using the metazoan models (this model i
 The TERL will be used to remove false-positives. We will use the model DS3 bacause it is suitable for the snake species (Modify the model properly based on your target species).
 
 Scripts ```CleanDeepTEheader.py``` and ```FilterTERL.py``` are available in this repository. Clone the repsitory or download each file separately.
-
 ```
 wget https://raw.githubusercontent.com/pedronachtigall/Repeat-annotation-pipeline/refs/heads/main/scripts/CleanDeepTEheader.py
 wget https://raw.githubusercontent.com/pedronachtigall/Repeat-annotation-pipeline/refs/heads/main/scripts/FilterTERL.py
@@ -90,7 +87,6 @@ Now that we have the species-specific library ready, we can perform the repeat a
 
 ### Species-specific library
 You can perform the repeat annotation using the species-specific library only.
-
 ```
 #concatenate known and unknown
 cat Crotalus_Adamanteus-families.prefix.fa.known.FINAL Crotalus_Adamanteus-families.prefix.fa.unknown.FINAL > Crotalus_Adamanteus-families.prefix.fa.known.unknown.FINAL
@@ -125,7 +121,6 @@ cat Crotalus_Adamanteus-families.prefix.fa.known.FINAL Crotalus_Adamanteus-famil
 
 #### One-round annotation
 You can do the annotation in one round (i.e., using the merged file):
-
 ```
 #run repeatmasker
 RepeatMasker -pa 20 -gff -s -a -inv -no_is -norna -xsmall -nolow -div 40 -lib Cadam_RM2Curated_TElib.fasta -cutoff 225 Cadam_chr.fa
@@ -143,8 +138,7 @@ python AdjustingGFF_RM.py Cadam_chr.fa.out.gff Cadam_RM2Curated_TElib.fasta Cada
  - ```Cadam_chr.fa.Kimura.distance``` is the CpG-adjusted Kimura distance file.
 
 #### Multi-round annotation
-OR, you can do the annotation "seriated", which you use one file at a time considering the masked genome of the previous run:
-
+OR, you can do the annotation in multiple rounds, which you use one file at a time considering the masked genome of the previous run:
 ```
 mkdir RL_FINAL && cd RL_FINAL
 
@@ -188,15 +182,19 @@ python ~/programs/TElibs/AdjustingGFF_RM.py Cadam_chr.full_mask.out.gff ../../Re
 
 #soft mask the genome
 bedtools maskfasta -soft -fi ../../Cadam_primary_chromosomes.fasta -bed Cadam_chr.full_mask.out.adjusted.gff -fo Cadam_primary_chromosomes.soft.masked.fasta
+
+#hard mask the genome
+bedtools maskfasta -fi ../../Cadam_primary_chromosomes.fasta -bed Cadam_chr.full_mask.out.adjusted.gff -fo Cadam_primary_chromosomes.hard.masked.fasta
 ```
  - ```-pa``` is the number of threads. Adjust it properly.
  - ```Cadam_chr.fa.out.adjusted.gff``` is your final annotation file.
  - ```Cadam_chr.fa.Kimura.distance``` is the CpG-adjusted Kimura distance file.
  - ```Cadam_primary_chromosomes.soft.masked.fasta``` is the soft-masked genome file.
+ - ```Cadam_primary_chromosomes.hard.masked.fasta``` is the hard-masked genome file.
 
 ## References
 If you use this tutorial or any of the resources/scripts, please consider citing: [Nachtigall et al., in prep]().
 
 If you use the curated set of repeat sequences from snakes, cite the original manuscript: [Castoe et al., 2013](https://doi.org/10.1073/pnas.1314475110).
 
-Please, cite the original mansucript of each tool used in this tutorial.
+Please, cite the original manuscript of each tool used in this tutorial.
