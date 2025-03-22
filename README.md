@@ -26,7 +26,7 @@ Ensure that all dependencies are installed and working properly.
 ## Model species
 We will use the Eastern diamondback rattlesnake (*Crotalus adamanteus*) as a model for this tutorial.
 
-The genome is linked to the manuscript ["A Segregating Structural Variant Defines Novel Venom Phenotypes in the Eastern Diamondback Rattlesnake"]() published in *Molecular Biology and Evolution* and it is available in a [figshare repository](https://figshare.com/projects/Eastern_diamondback_rattlesnake_Crotalus_adamanteus_-_haplotype-resolved_genome_assembly/200614).
+The genome is linked to the manuscript ["A Segregating Structural Variant Defines Novel Venom Phenotypes in the Eastern Diamondback Rattlesnake"](https://doi.org/10.1093/molbev/msaf058) published in *Molecular Biology and Evolution* and it is available in a [figshare repository](https://figshare.com/projects/Eastern_diamondback_rattlesnake_Crotalus_adamanteus_-_haplotype-resolved_genome_assembly/200614).
 
 Download and decompress the genome data:
 ```
@@ -193,7 +193,7 @@ bedtools maskfasta -fi ../../Cadam_primary_chromosomes.fasta -bed Cadam_chr.full
  - ```Cadam_primary_chromosomes.hard.masked.fasta``` is the hard-masked genome file.
 
 ## References
-If you use this tutorial or any of the resources/scripts, please consider citing: [Nachtigall et al., in prep]().
+If you use this tutorial or any of the resources/scripts, please consider citing: [Nachtigall et al., 2025](https://doi.org/10.1093/molbev/msaf058).
 
 If you use the curated set of repeat sequences from snakes, cite the original manuscript: [Castoe et al., 2013](https://doi.org/10.1073/pnas.1314475110).
 
